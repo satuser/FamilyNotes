@@ -2,6 +2,7 @@ package com.livelife.familynotes
 
 import android.animation.ObjectAnimator
 import android.content.res.Configuration
+import android.graphics.drawable.DrawableContainer
 import android.net.http.HttpResponseCache.install
 import android.os.Bundle
 import android.view.View
@@ -17,12 +18,17 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,8 +42,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
-       // val splashScreen = installSplashScreen()
+        // val splashScreen = installSplashScreen()
         var keepSplashScreenOn = true
         lifecycleScope.launch {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
@@ -50,6 +57,7 @@ class MainActivity : ComponentActivity() {
             keepSplashScreenOn
         }
         super.onCreate(savedInstanceState)
+
         setContent {
             FamilyNotesTheme {
                 // A surface container using the 'background' color from the theme
@@ -57,7 +65,8 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    Converision(messages = SampleData.conversationSample)
+                    BottomNavigation()
+                    //Converision(messages = SampleData.conversationSample)
                 }
             }
         }
@@ -67,6 +76,48 @@ class MainActivity : ComponentActivity() {
 private fun setupSplashScreen() {
 
 }
+
+@Composable
+fun BottomNavigation() {
+    val screens = listOf("Notes", "New Note", "Settings")
+    var selectedScreen by remember {
+        mutableStateOf(screens.first())
+    }
+    Scaffold(
+        bottomBar = {
+            BottomNavigation {
+                screens.forEach {
+                    BottomNavigationItem(
+                        icon = { Icon(getIconForScreen(it), contentDescription = it) },
+                        label = { Text(text = it) },
+                        selected = it == selectedScreen,
+                        onClick = { selectedScreen = it },
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
+            }
+        }, content = {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = "Selected Screen: $selectedScreen")
+            }
+        }
+    )
+}
+
+@Composable
+fun getIconForScreen(screen: String): ImageVector {
+    return when (screen) {
+        "Notes" -> Icons.Default.Home
+        "New Note" -> Icons.Default.Edit
+        "Settings" -> Icons.Default.Settings
+        else -> Icons.Default.Home
+    }
+}
+
 @Composable
 fun Greeting(msg: Message?) {
     Row(modifier = Modifier.padding(all = 8.dp)) {
@@ -86,18 +137,22 @@ fun Greeting(msg: Message?) {
             if (isExpanded) MaterialTheme.colors.primary else MaterialTheme.colors.surface
         )
         Column(modifier = Modifier.clickable { isExpanded = !isExpanded }) {
-            Text(text = "${msg?.author}:",
-            color = MaterialTheme.colors.secondary,
-            style = MaterialTheme.typography.h6)
+            Text(
+                text = "${msg?.author}:",
+                color = MaterialTheme.colors.secondary,
+                style = MaterialTheme.typography.h6
+            )
             Spacer(modifier = Modifier.height(4.dp))
-            Surface(shape = MaterialTheme.shapes.medium,
+            Surface(
+                shape = MaterialTheme.shapes.medium,
                 elevation = 1.dp,
-            color = surfaceColor,
-            modifier = Modifier
-                .animateContentSize()
-                .padding(1.dp)) {
+                color = surfaceColor,
+                modifier = Modifier
+                    .animateContentSize()
+                    .padding(1.dp)
+            ) {
                 Text(
-                    text = msg?.body ?: ""  ,
+                    text = msg?.body ?: "",
                     modifier = Modifier.padding(4.dp),
                     maxLines = if (isExpanded) Int.MAX_VALUE else 1,
                     style = MaterialTheme.typography.body1
@@ -107,10 +162,13 @@ fun Greeting(msg: Message?) {
     }
 }
 
+
 @Preview(showBackground = true, name = "Light Theme")
-@Preview(uiMode = Configuration.UI_MODE_NIGHT_YES,
-showBackground = true,
-name = "Dark Theme")
+@Preview(
+    uiMode = Configuration.UI_MODE_NIGHT_YES,
+    showBackground = true,
+    name = "Dark Theme"
+)
 @Composable
 fun DefaultPreview() {
     FamilyNotesTheme {
@@ -122,7 +180,7 @@ fun DefaultPreview() {
 
 @Composable
 fun Converision(messages: List<Message>) {
-    LazyColumn{
+    LazyColumn {
         items(messages) {
             Greeting(msg = it)
         }
