@@ -99,11 +99,13 @@ fun BottomNavigation() {
         }, content = {
             Column(
                 modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
+                verticalArrangement = Arrangement.Top,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(text = "Selected Screen: $selectedScreen")
             }
+            Converision(messages = SampleData.conversationSample)
+
         }
     )
 }
