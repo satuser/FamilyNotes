@@ -1,12 +1,7 @@
 package com.livelife.familynotes
 
-import android.animation.ObjectAnimator
 import android.content.res.Configuration
-import android.graphics.drawable.DrawableContainer
-import android.net.http.HttpResponseCache.install
 import android.os.Bundle
-import android.view.View
-import android.view.animation.DecelerateInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.animateColorAsState
@@ -24,90 +19,40 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.core.animation.doOnEnd
 import com.livelife.familynotes.ui.theme.FamilyNotesTheme
-import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        // val splashScreen = installSplashScreen()
-        var keepSplashScreenOn = true
-        lifecycleScope.launch {
-            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                delay(1000)
-                keepSplashScreenOn = false
-            }
-        }
-
-        installSplashScreen().setKeepOnScreenCondition {
-            keepSplashScreenOn
-        }
         super.onCreate(savedInstanceState)
 
         setContent {
-            FamilyNotesTheme {
-                // A surface container using the 'background' color from the theme
+           MyAppNav()
+
+           /* FamilyNotesTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
                     BottomNavigation()
-                    //Converision(messages = SampleData.conversationSample)
                 }
-            }
+            }*/
         }
     }
-}
-
-private fun setupSplashScreen() {
-
 }
 
 @Composable
 fun BottomNavigation() {
-    val screens = listOf("Notes", "New Note", "Settings")
-    var selectedScreen by remember {
-        mutableStateOf(screens.first())
-    }
-    Scaffold(
-        bottomBar = {
-            BottomNavigation {
-                screens.forEach {
-                    BottomNavigationItem(
-                        icon = { Icon(getIconForScreen(it), contentDescription = it) },
-                        label = { Text(text = it) },
-                        selected = it == selectedScreen,
-                        onClick = { selectedScreen = it },
-                        modifier = Modifier.padding(8.dp)
-                    )
-                }
-            }
-        }, content = {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Top,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "Selected Screen: $selectedScreen")
-            }
-            Converision(messages = SampleData.conversationSample)
 
-        }
-    )
 }
 
 @Composable
